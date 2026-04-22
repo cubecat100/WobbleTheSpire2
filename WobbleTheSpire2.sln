@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36401.2 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WobbleTheSpire2", "WobbleTheSpire2.csproj", "{644E7CB5-66A8-C1C1-B15D-71CFE5095838}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		ExportDebug|Any CPU = ExportDebug|Any CPU
+		ExportRelease|Any CPU = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{644E7CB5-66A8-C1C1-B15D-71CFE5095838}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{644E7CB5-66A8-C1C1-B15D-71CFE5095838}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{644E7CB5-66A8-C1C1-B15D-71CFE5095838}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{644E7CB5-66A8-C1C1-B15D-71CFE5095838}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{644E7CB5-66A8-C1C1-B15D-71CFE5095838}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{644E7CB5-66A8-C1C1-B15D-71CFE5095838}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {59BD18C2-2276-4E3E-BDBC-B66F02388AE4}
+	EndGlobalSection
+EndGlobal

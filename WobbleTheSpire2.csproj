@@ -1,0 +1,46 @@
+<Project Sdk="Godot.NET.Sdk/4.5.1">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>WobbleTheSpire2</RootNamespace>
+    <AssemblyName>WobbleTheSpire2</AssemblyName>
+    <Sts2AssemblyPath Condition=" '$(Sts2AssemblyPath)' == '' and Exists('$(MSBuildProjectDirectory)\sts2.dll') ">$(MSBuildProjectDirectory)\sts2.dll</Sts2AssemblyPath>
+    <Sts2AssemblyPath Condition=" '$(Sts2AssemblyPath)' == '' and Exists('$(MSBuildProjectDirectory)\..\MapPathMod\.godot\mono\temp\bin\Debug\sts2.dll') ">$(MSBuildProjectDirectory)\..\MapPathMod\.godot\mono\temp\bin\Debug\sts2.dll</Sts2AssemblyPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lib.Harmony" Version="2.3.3" />
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('$(Sts2AssemblyPath)')">
+    <Reference Include="sts2">
+      <HintPath>$(Sts2AssemblyPath)</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="EnsureSts2Reference" BeforeTargets="CoreCompile">
+    <Error
+      Condition="!Exists('$(Sts2AssemblyPath)')"
+      Text="Set Sts2AssemblyPath or place sts2.dll in the project root before building."
+    />
+  </Target>
+
+  <Target Name="CopyToModsFolder" AfterTargets="Build" Condition="'$(SkipModDeployment)' != 'true'">
+    <PropertyGroup>
+      <ModsFolder>D:\SteamLibrary\steamapps\common\Slay the Spire 2\mods\WobbleTheSpire2</ModsFolder>
+      <SourceManifest>$(MSBuildProjectDirectory)\mod_manifest.json</SourceManifest>
+    </PropertyGroup>
+
+    <Message Text="Cleaning WobbleTheSpire2 mods folder..." Importance="high" />
+    <RemoveDir Directories="$(ModsFolder)" Condition="Exists('$(ModsFolder)')" />
+    <MakeDir Directories="$(ModsFolder)" />
+    <Message Text="Copying WobbleTheSpire2 to STS2 mods folder..." Importance="high" />
+    <Copy SourceFiles="$(OutputPath)WobbleTheSpire2.dll" DestinationFolder="$(ModsFolder)" SkipUnchangedFiles="false" />
+    <Copy SourceFiles="$(SourceManifest)" DestinationFolder="$(ModsFolder)" SkipUnchangedFiles="false" />
+    <Message Text="Successfully copied WobbleTheSpire2 to $(ModsFolder)" Importance="high" />
+  </Target>
+</Project>
