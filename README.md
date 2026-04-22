@@ -4,7 +4,7 @@
 
 WobbleTheSpire2 is a hit reaction mod for Slay the Spire 2.
 
-It replaces the default hit/shake reaction with a spring-like wobble animation. The current implementation uses a low pivot rotation.
+It replaces the default hit/shake reaction with a spring-like wobble animation.
 
 ## Features
 
@@ -21,7 +21,7 @@ It replaces the default hit/shake reaction with a spring-like wobble animation. 
 
 WobbleTheSpire2는 Slay the Spire 2용 피격 흔들림 모드입니다.
 
-몬스터와 플레이어가 피격될 때 기본 hit/shake 반응 대신, 스프링처럼 튕기는 wobble 애니메이션을 재생합니다. 현재 구현은 아래쪽 pivot을 기준으로 회전하는 방식입니다.
+몬스터와 플레이어가 피격될 때 기본 hit/shake 반응 대신, 스프링처럼 튕기는 wobble 애니메이션을 재생합니다.
 
 ## 기능
 
