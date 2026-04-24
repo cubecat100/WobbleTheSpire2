@@ -18,7 +18,7 @@ public static class Patch_NCreatureSetAnimationTrigger
         WobbleSettings settings = WobbleSettingsManager.Current;
         bool shouldBlock = BaseHitAnimationPolicy.ShouldBlockAnimationTrigger(__instance, trigger, settings);
 
-        if (settings.EnableHitLogs == true && __instance.Entity is not null)
+        if (__instance.Entity is not null)
         {
             Log.Warn($"[WobbleTheSpire2] SetAnimationTrigger: target={__instance.Entity.LogName}, trigger={trigger}, blocked={shouldBlock}");
         }

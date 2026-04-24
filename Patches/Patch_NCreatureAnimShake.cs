@@ -12,7 +12,7 @@ public static class Patch_NCreatureAnimShake
         WobbleSettings settings = WobbleSettingsManager.Current;
         bool allowOriginal = BaseHitAnimationPolicy.AllowOriginalShake(__instance, settings);
 
-        if (settings.EnableHitLogs == true && __instance.Entity is not null)
+        if (__instance.Entity is not null)
         {
             Log.Warn($"[WobbleTheSpire2] AnimShake: target={__instance.Entity.LogName}, enemy={__instance.Entity.IsEnemy}, allowOriginal={allowOriginal}, hp={__instance.Entity.CurrentHp}");
         }

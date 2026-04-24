@@ -13,9 +13,7 @@ public partial class WobbleModdingSettingsControl : PanelContainer
     private CheckBox _enablePlayerWobble = null!;
     private CheckBox _blockBaseHitAnimation = null!;
     private CheckBox _disableWobbleOnDeath = null!;
-    private CheckBox _enableHitLogs = null!;
     private CheckBox _enableHorizontalWobble = null!;
-    private CheckBox _enableSquashAndStretch = null!;
     private CheckBox _strongerWobble = null!;
     private CheckBox _longerWobble = null!;
     private Label _statusLabel = null!;
@@ -131,20 +129,10 @@ public partial class WobbleModdingSettingsControl : PanelContainer
             _disableWobbleOnDeath,
             "If the target dies from that hit, WobbleTheSpire2 will not play and the base animation can remain."));
 
-        _enableHitLogs = CreateOptionCheckBox("Enable hit logs");
-        layout.AddChild(CreateOptionRow(
-            _enableHitLogs,
-            "Writes one compact hit log line so you can confirm detection during testing."));
-
         _enableHorizontalWobble = CreateOptionCheckBox("Enable horizontal movement");
         layout.AddChild(CreateOptionRow(
             _enableHorizontalWobble,
             "Moves the body left and right during wobble. Default is off for a rotation-focused wobble."));
-
-        _enableSquashAndStretch = CreateOptionCheckBox("Enable squash and stretch");
-        layout.AddChild(CreateOptionRow(
-            _enableSquashAndStretch,
-            "Adds the slight squeeze and stretch effect during wobble. Default is off for a cleaner rigid shake."));
 
         _strongerWobble = CreateOptionCheckBox("Use stronger wobble");
         layout.AddChild(CreateOptionRow(
@@ -186,9 +174,7 @@ public partial class WobbleModdingSettingsControl : PanelContainer
             EnablePlayerWobble = _enablePlayerWobble.ButtonPressed,
             BlockBaseHitAnimation = _blockBaseHitAnimation.ButtonPressed,
             DisableWobbleOnDeath = _disableWobbleOnDeath.ButtonPressed,
-            EnableHitLogs = _enableHitLogs.ButtonPressed,
             EnableHorizontalWobble = _enableHorizontalWobble.ButtonPressed,
-            EnableSquashAndStretch = _enableSquashAndStretch.ButtonPressed,
             StrongerWobble = _strongerWobble.ButtonPressed,
             LongerWobble = _longerWobble.ButtonPressed
         };
@@ -204,9 +190,7 @@ public partial class WobbleModdingSettingsControl : PanelContainer
         _enablePlayerWobble.ButtonPressed = settings.EnablePlayerWobble;
         _blockBaseHitAnimation.ButtonPressed = settings.BlockBaseHitAnimation;
         _disableWobbleOnDeath.ButtonPressed = settings.DisableWobbleOnDeath;
-        _enableHitLogs.ButtonPressed = settings.EnableHitLogs;
         _enableHorizontalWobble.ButtonPressed = settings.EnableHorizontalWobble;
-        _enableSquashAndStretch.ButtonPressed = settings.EnableSquashAndStretch;
         _strongerWobble.ButtonPressed = settings.StrongerWobble;
         _longerWobble.ButtonPressed = settings.LongerWobble;
     }

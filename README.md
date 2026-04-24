@@ -10,10 +10,10 @@ It replaces the default hit/shake reaction with a spring-like wobble animation.
 
 - Wobble on monster hit
 - Wobble on player hit
+
 - Option to block the original hit animation
 - Option to disable wobble on death
 - Option to adjust wobble strength
-- Option to enable squash and stretch
 - Option to use stronger wobble
 - Option to use longer wobble
 
@@ -31,6 +31,5 @@ WobbleTheSpire2는 Slay the Spire 2용 피격 흔들림 모드입니다.
 - 기본 피격 애니메이션 차단 옵션
 - 사망 시 wobble 비활성화 옵션
 - wobble 강도 조절 옵션
-- squash and stretch 옵션
 - stronger wobble 옵션
 - longer wobble 옵션

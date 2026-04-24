@@ -18,7 +18,6 @@ public sealed partial class WobbleCombatDebugProbe : Node
     private const float MinPivotOffset = 18.0f;
     private const float MaxPivotOffset = 64.0f;
     private const float MaxHorizontalOffset = 24.0f;
-    private const float MaxStretch = 0.05f;
     private const float RotationCyclesPerSecond = 3.25f;
     private const float DampingPerSecond = 2.45f;
     private const float MinWobbleStrength = 0.35f;
@@ -114,7 +113,7 @@ public sealed partial class WobbleCombatDebugProbe : Node
             maxWobbleStrength);
         existingState.TotalDuration = Mathf.Max(existingState.TotalDuration, wobbleProfile.DurationSeconds);
         existingState.TimeRemaining = existingState.TotalDuration;
-        LogHit(settings, creatureNode, damageAmount, source);
+        LogHit(creatureNode, damageAmount, source);
     }
 
     private void UpdateActiveWobbles(float delta)
@@ -150,17 +149,12 @@ public sealed partial class WobbleCombatDebugProbe : Node
             float horizontalOffset = settings.EnableHorizontalWobble == true
                 ? Mathf.Sin(phase + 0.45f) * MaxHorizontalOffset * directionalEnvelope
                 : 0.0f;
-            float stretch = settings.EnableSquashAndStretch == true
-                ? Mathf.Sin(phase + 0.9f) * MaxStretch * envelope
-                : 0.0f;
 
             state.PivotWrapper.Rotation = state.BaseWrapperRotation + rotation;
             state.PivotWrapper.Position = state.BaseWrapperPosition + new Vector2(horizontalOffset, 0.0f);
             state.Body.Position = state.BaseBodyPosition;
             state.Body.Rotation = state.BaseBodyRotation;
-            state.Body.Scale = new Vector2(
-                state.BaseBodyScale.X + (stretch * 0.45f),
-                state.BaseBodyScale.Y - stretch);
+            state.Body.Scale = state.BaseBodyScale;
 
             if (state.TimeRemaining <= 0.0f)
             {
@@ -242,13 +236,8 @@ public sealed partial class WobbleCombatDebugProbe : Node
             : MaxWobbleStrength;
     }
 
-    private static void LogHit(WobbleSettings settings, NCreature creatureNode, int damageAmount, string source)
+    private static void LogHit(NCreature creatureNode, int damageAmount, string source)
     {
-        if (settings.EnableHitLogs != true)
-        {
-            return;
-        }
-
         Log.Warn($"[WobbleTheSpire2] Hit: {creatureNode.Entity.LogName}, dmg={damageAmount}, type={TrimSource(source)}");
     }
 

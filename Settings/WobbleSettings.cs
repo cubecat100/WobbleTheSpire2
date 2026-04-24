@@ -11,9 +11,7 @@ public sealed class WobbleSettings
     public bool EnablePlayerWobble { get; set; } = true;
     public bool BlockBaseHitAnimation { get; set; } = true;
     public bool DisableWobbleOnDeath { get; set; } = true;
-    public bool EnableHitLogs { get; set; } = true;
     public bool EnableHorizontalWobble { get; set; }
-    public bool EnableSquashAndStretch { get; set; }
     public bool StrongerWobble { get; set; }
     public bool LongerWobble { get; set; }
     public int OverallWobbleScalePercent { get; set; } = 115;
@@ -25,9 +23,7 @@ public sealed class WobbleSettings
             EnablePlayerWobble = EnablePlayerWobble,
             BlockBaseHitAnimation = BlockBaseHitAnimation,
             DisableWobbleOnDeath = DisableWobbleOnDeath,
-            EnableHitLogs = EnableHitLogs,
             EnableHorizontalWobble = EnableHorizontalWobble,
-            EnableSquashAndStretch = EnableSquashAndStretch,
             StrongerWobble = StrongerWobble,
             LongerWobble = LongerWobble,
             OverallWobbleScalePercent = OverallWobbleScalePercent
@@ -41,9 +37,7 @@ public sealed class WobbleSettings
             EnablePlayerWobble = EnablePlayerWobble,
             BlockBaseHitAnimation = BlockBaseHitAnimation,
             DisableWobbleOnDeath = DisableWobbleOnDeath,
-            EnableHitLogs = EnableHitLogs,
             EnableHorizontalWobble = EnableHorizontalWobble,
-            EnableSquashAndStretch = EnableSquashAndStretch,
             StrongerWobble = StrongerWobble,
             LongerWobble = LongerWobble,
             OverallWobbleScalePercent = ClampPercent(OverallWobbleScalePercent, 115)
