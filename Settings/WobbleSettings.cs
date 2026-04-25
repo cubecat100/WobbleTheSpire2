@@ -2,10 +2,13 @@
 
 namespace WobbleTheSpire2;
 
+/// <summary>
+/// WobbleTheSpire2 설정 파일에 저장되는 사용자 옵션 값
+/// </summary>
 public sealed class WobbleSettings
 {
     public const string FileName = "wobblethespire2_settings.cfg";
-    private const int MinScalePercent = 35;
+    private const int MinScalePercent = 70;
     private const int MaxScalePercent = 130;
 
     public bool EnablePlayerWobble { get; set; } = true;
@@ -14,8 +17,11 @@ public sealed class WobbleSettings
     public bool EnableHorizontalWobble { get; set; }
     public bool StrongerWobble { get; set; }
     public bool LongerWobble { get; set; }
-    public int OverallWobbleScalePercent { get; set; } = 115;
+    public int OverallWobbleScalePercent { get; set; } = 100;
 
+    /// <summary>
+    /// 현재 설정 값을 복사한 새 인스턴스 생성
+    /// </summary>
     public WobbleSettings Clone()
     {
         return new WobbleSettings
@@ -30,31 +36,16 @@ public sealed class WobbleSettings
         };
     }
 
-    public WobbleSettings Normalize()
+    /// <summary>
+    /// 전체 wobble 강도 퍼센트 값을 허용 범위로 보정
+    /// </summary>
+    public static int ScalePercentRangeCheck(int scale)
     {
-        return new WobbleSettings
+        return scale switch
         {
-            EnablePlayerWobble = EnablePlayerWobble,
-            BlockBaseHitAnimation = BlockBaseHitAnimation,
-            DisableWobbleOnDeath = DisableWobbleOnDeath,
-            EnableHorizontalWobble = EnableHorizontalWobble,
-            StrongerWobble = StrongerWobble,
-            LongerWobble = LongerWobble,
-            OverallWobbleScalePercent = ClampPercent(OverallWobbleScalePercent, 115)
+            < MinScalePercent => MinScalePercent,
+            > MaxScalePercent => MaxScalePercent,
+            _ => scale
         };
-    }
-
-    private static int ClampPercent(int value, int fallback)
-    {
-        if (value <= 0)
-        {
-            return fallback;
-        }
-
-        return value < MinScalePercent
-            ? MinScalePercent
-            : value > MaxScalePercent
-                ? MaxScalePercent
-                : value;
     }
 }

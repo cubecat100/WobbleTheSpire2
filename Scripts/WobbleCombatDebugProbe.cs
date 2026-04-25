@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -7,6 +8,9 @@ using MegaCrit.Sts2.Core.Nodes.Rooms;
 
 namespace WobbleTheSpire2;
 
+/// <summary>
+/// 전투방 피격 이벤트 수신, wobble 애니메이션 재생
+/// </summary>
 public sealed partial class WobbleCombatDebugProbe : Node
 {
     public const string NodeName = "WobbleCombatDebugProbe";
@@ -24,25 +28,40 @@ public sealed partial class WobbleCombatDebugProbe : Node
     private const float MaxWobbleStrength = 3.1f;
     private const float MaxBoostedWobbleStrength = 4.0f;
 
+    private static int[] clampedDamageThreshold = [0, 8, 16, 25];
+    private static float[] clampedDamageStrengthMultiplier = [0.52f, 1.15f, 2.0f, 2.95f];
+
     private readonly Dictionary<NCreature, ActiveWobbleState> _activeWobbles = [];
 
+    /// <summary>
+    /// Godot 트리 진입 시 노드 이름과 처리 모드 설정
+    /// </summary>
     public override void _EnterTree()
     {
         Name = NodeName;
         ProcessMode = ProcessModeEnum.Always;
     }
 
+    /// <summary>
+    /// 전투방 probe를 wobble 시스템에 등록
+    /// </summary>
     public override void _Ready()
     {
         ModEntry.WobbleSystem?.RegisterCombatProbe(this);
         Log.Warn("[WobbleTheSpire2] Combat wobble probe ready.");
     }
 
+    /// <summary>
+    /// 매 프레임 활성 wobble 상태 갱신
+    /// </summary>
     public override void _Process(double delta)
     {
         UpdateActiveWobbles((float)delta);
     }
 
+    /// <summary>
+    /// 노드 제거 시 등록 해제, 변형된 body 복구
+    /// </summary>
     public override void _ExitTree()
     {
         ModEntry.WobbleSystem?.UnregisterCombatProbe(this);
@@ -50,6 +69,9 @@ public sealed partial class WobbleCombatDebugProbe : Node
         _activeWobbles.Clear();
     }
 
+    /// <summary>
+    /// 피격된 Creature를 전투방 NCreature 노드로 변환, wobble 시작
+    /// </summary>
     public void OnMonsterHit(Creature target, string source, int damageAmount)
     {
         WobbleSettings settings = WobbleSettingsManager.Current;
@@ -81,6 +103,9 @@ public sealed partial class WobbleCombatDebugProbe : Node
         TriggerWobble(creatureNode, wobbleProfile, source, damageAmount, settings);
     }
 
+    /// <summary>
+    /// 대상 body wobble 상태 생성, 기존 wobble 강도와 시간 갱신
+    /// </summary>
     private void TriggerWobble(
         NCreature creatureNode,
         DamageWobbleProfile wobbleProfile,
@@ -116,6 +141,9 @@ public sealed partial class WobbleCombatDebugProbe : Node
         LogHit(creatureNode, damageAmount, source);
     }
 
+    /// <summary>
+    /// 활성 wobble 목록 순회, 회전과 수평 이동 및 감쇠 적용
+    /// </summary>
     private void UpdateActiveWobbles(float delta)
     {
         if (_activeWobbles.Count == 0)
@@ -143,7 +171,7 @@ public sealed partial class WobbleCombatDebugProbe : Node
             float envelope = Mathf.Exp(-DampingPerSecond * elapsed) * state.Strength;
             WobbleSettings settings = WobbleSettingsManager.Current;
 
-            // Treat the hit like an impulse so the wobble starts as a springy motion, not a held lean.
+            // 피격을 순간 충격으로 처리, 스프링 같은 첫 흔들림 생성
             float directionalEnvelope = envelope * state.ImpulseDirection;
             float rotation = Mathf.Sin(phase) * MaxRotationRadians * directionalEnvelope;
             float horizontalOffset = settings.EnableHorizontalWobble == true
@@ -169,6 +197,9 @@ public sealed partial class WobbleCombatDebugProbe : Node
         }
     }
 
+    /// <summary>
+    /// 현재 활성 wobble 대상 전체 body 복구
+    /// </summary>
     private void RestoreAllBodies()
     {
         foreach (ActiveWobbleState state in _activeWobbles.Values)
@@ -177,6 +208,9 @@ public sealed partial class WobbleCombatDebugProbe : Node
         }
     }
 
+    /// <summary>
+    /// wobble 적용을 위해 감싼 body를 원래 부모 노드 위치로 복구
+    /// </summary>
     private static void RestoreBody(ActiveWobbleState state)
     {
         if (GodotObject.IsInstanceValid(state.Body) == false)
@@ -208,6 +242,9 @@ public sealed partial class WobbleCombatDebugProbe : Node
         state.PivotWrapper.QueueFree();
     }
 
+    /// <summary>
+    /// NCreature에서 실제 시각 body 노드 검색
+    /// </summary>
     private static Node2D? GetCreatureBody(NCreature creatureNode)
     {
         if (creatureNode.Body is not null)
@@ -218,6 +255,9 @@ public sealed partial class WobbleCombatDebugProbe : Node
         return creatureNode.Visuals?.GetCurrentBody();
     }
 
+    /// <summary>
+    /// 로그 표시용 피격 원본 문자열 정리
+    /// </summary>
     private static string TrimSource(string source)
     {
         const string prefix = "Creature.LoseHpInternal props=";
@@ -229,6 +269,9 @@ public sealed partial class WobbleCombatDebugProbe : Node
         return source;
     }
 
+    /// <summary>
+    /// 현재 설정 기준, 최대 wobble 강도 반환
+    /// </summary>
     private static float GetMaxWobbleStrength(WobbleSettings settings)
     {
         return settings.StrongerWobble == true
@@ -236,32 +279,23 @@ public sealed partial class WobbleCombatDebugProbe : Node
             : MaxWobbleStrength;
     }
 
+    /// <summary>
+    /// 피격 감지 결과 로그 출력
+    /// </summary>
     private static void LogHit(NCreature creatureNode, int damageAmount, string source)
     {
         Log.Warn($"[WobbleTheSpire2] Hit: {creatureNode.Entity.LogName}, dmg={damageAmount}, type={TrimSource(source)}");
     }
 
+    /// <summary>
+    /// 피해량 구간과 설정 옵션 기준, wobble 강도와 지속 시간 계산
+    /// </summary>
     private static DamageWobbleProfile ComputeWobbleProfile(int damageAmount, WobbleSettings settings)
     {
         int clampedDamage = Mathf.Max(0, damageAmount);
         DamageWobbleProfile profile;
 
-        if (clampedDamage >= 25)
-        {
-            profile = new DamageWobbleProfile(2.95f * BaseStrengthMultiplier, BaseDurationSeconds);
-        }
-        else if (clampedDamage >= 16)
-        {
-            profile = new DamageWobbleProfile(2.0f * BaseStrengthMultiplier, BaseDurationSeconds);
-        }
-        else if (clampedDamage >= 8)
-        {
-            profile = new DamageWobbleProfile(1.15f * BaseStrengthMultiplier, BaseDurationSeconds);
-        }
-        else
-        {
-            profile = new DamageWobbleProfile(0.52f * BaseStrengthMultiplier, BaseDurationSeconds);
-        }
+        profile = DamageProfileRes(clampedDamage);
 
         float strength = settings.StrongerWobble == true
             ? profile.Strength * 1.2f
@@ -276,6 +310,25 @@ public sealed partial class WobbleCombatDebugProbe : Node
         return new DamageWobbleProfile(strength, duration);
     }
 
+    /// <summary>
+    /// 피해량 프로필 구성, 구간별로 미리 정의된 강도 배율과 기본 지속 시간 반환
+    /// </summary>
+    private static DamageWobbleProfile DamageProfileRes(int clampedDamage)
+    {
+        for(int i = clampedDamageThreshold.Length - 1; i > 0; i--)
+        {
+            if (clampedDamage >= clampedDamageThreshold[i])
+            {
+                return new DamageWobbleProfile(clampedDamageStrengthMultiplier[i] * BaseStrengthMultiplier, BaseDurationSeconds);
+            }
+        }
+
+        return new DamageWobbleProfile(clampedDamageStrengthMultiplier[0] * BaseStrengthMultiplier, BaseDurationSeconds);
+    }
+
+    /// <summary>
+    /// body를 피벗 래퍼 아래로 이동, 하단 기준 회전 wobble 준비
+    /// </summary>
     private static ActiveWobbleState? CreateActiveWobbleState(
         NCreature creatureNode,
         Node2D body,
@@ -302,6 +355,7 @@ public sealed partial class WobbleCombatDebugProbe : Node
             Position = originalBodyPosition + new Vector2(0.0f, pivotOffset)
         };
 
+        // body 자체 원점 대신 하단 피벗 기준으로 흔들리도록 임시 래퍼 노드 삽입
         originalParent.AddChild(pivotWrapper);
         originalParent.MoveChild(pivotWrapper, originalBodyIndex);
         originalParent.RemoveChild(body);
@@ -331,6 +385,9 @@ public sealed partial class WobbleCombatDebugProbe : Node
             wobbleProfile.DurationSeconds);
     }
 
+    /// <summary>
+    /// 적과 플레이어의 첫 충격 방향 결정
+    /// </summary>
     private static float DetermineImpulseDirection(NCreature creatureNode, Node2D body)
     {
         if (creatureNode.Entity?.IsEnemy == true)
@@ -348,6 +405,9 @@ public sealed partial class WobbleCombatDebugProbe : Node
         return -1.0f;
     }
 
+    /// <summary>
+    /// 시각 노드 경계 기준, 회전 피벗 하단 오프셋 추정
+    /// </summary>
     private static float EstimatePivotOffset(Node2D body)
     {
         float maxY = float.MinValue;
@@ -362,6 +422,9 @@ public sealed partial class WobbleCombatDebugProbe : Node
         return Mathf.Clamp(maxY + PivotPadding, MinPivotOffset, MaxPivotOffset);
     }
 
+    /// <summary>
+    /// body 하위 노드 순회, 시각적 최하단 Y 좌표 수집
+    /// </summary>
     private static void CollectLowerExtent(Node node, Transform2D transformToBody, ref float maxY, ref bool hasVisualBounds)
     {
         if (node is not Node2D node2D)
@@ -387,6 +450,9 @@ public sealed partial class WobbleCombatDebugProbe : Node
         }
     }
 
+    /// <summary>
+    /// Sprite2D 사각형 모서리 변환, 하단 경계 계산에 포함
+    /// </summary>
     private static void IncludeRect(Rect2 rect, Transform2D transformToBody, ref float maxY)
     {
         Vector2[] corners =
@@ -404,8 +470,14 @@ public sealed partial class WobbleCombatDebugProbe : Node
         }
     }
 
+    /// <summary>
+    /// wobble 진행 중 원본 노드 상태와 현재 애니메이션 값 보관
+    /// </summary>
     private sealed class ActiveWobbleState
     {
+        /// <summary>
+        /// wobble 대상과 복구용 원본 상태 저장
+        /// </summary>
         public ActiveWobbleState(
             NCreature creatureNode,
             Node2D body,
@@ -463,5 +535,8 @@ public sealed partial class WobbleCombatDebugProbe : Node
         public float TimeRemaining { get; set; }
     }
 
+    /// <summary>
+    /// 피해량 기준으로 계산된 wobble 강도와 지속 시간 값
+    /// </summary>
     private readonly record struct DamageWobbleProfile(float Strength, float DurationSeconds);
 }

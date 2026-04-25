@@ -5,6 +5,9 @@ using System;
 
 namespace WobbleTheSpire2;
 
+/// <summary>
+/// 게임 내 모드 설정 화면에 표시되는 WobbleTheSpire2 전용 설정 패널
+/// </summary>
 public partial class WobbleModdingSettingsControl : PanelContainer
 {
     public const string NodeName = "WobbleModdingSettingsControl";
@@ -18,12 +21,18 @@ public partial class WobbleModdingSettingsControl : PanelContainer
     private CheckBox _longerWobble = null!;
     private Label _statusLabel = null!;
 
+    /// <summary>
+    /// 설정 패널 노드 기본 이름과 처리 모드 설정
+    /// </summary>
     public WobbleModdingSettingsControl()
     {
         Name = NodeName;
         ProcessMode = ProcessModeEnum.Always;
     }
 
+    /// <summary>
+    /// 패널 배치와 스타일 적용, UI 구성
+    /// </summary>
     public override void _Ready()
     {
         MouseFilter = MouseFilterEnum.Stop;
@@ -40,11 +49,17 @@ public partial class WobbleModdingSettingsControl : PanelContainer
         BuildUi();
     }
 
+    /// <summary>
+    /// 현재 저장된 설정 값을 입력 컨트롤에 반영
+    /// </summary>
     public void Initialize()
     {
         LoadSettingsIntoInputs();
     }
 
+    /// <summary>
+    /// 선택된 모드 확인, WobbleTheSpire2 설정 패널 표시 제어
+    /// </summary>
     public void UpdateSelectedMod(Mod? mod)
     {
         bool isTargetMod = IsWobbleMod(mod);
@@ -60,6 +75,9 @@ public partial class WobbleModdingSettingsControl : PanelContainer
         }
     }
 
+    /// <summary>
+    /// 설정 패널 전체 UI 트리 생성
+    /// </summary>
     private void BuildUi()
     {
         MarginContainer margin = new();
@@ -109,10 +127,11 @@ public partial class WobbleModdingSettingsControl : PanelContainer
         AddScaleItem(_overallWobbleScale, "Normal (100%)", 100);
         AddScaleItem(_overallWobbleScale, "High (115%)", 115);
         AddScaleItem(_overallWobbleScale, "Very high (130%)", 130);
+
         layout.AddChild(CreateOptionRow(
             "Overall wobble strength",
             _overallWobbleScale,
-            "Adjusts the full wobble intensity for all hits. Default is High."));
+            "Adjusts the full wobble intensity for all hits. Default is Normal."));
 
         _enablePlayerWobble = CreateOptionCheckBox("Enable player wobble");
         layout.AddChild(CreateOptionRow(
@@ -166,11 +185,14 @@ public partial class WobbleModdingSettingsControl : PanelContainer
         layout.AddChild(_statusLabel);
     }
 
+    /// <summary>
+    /// Apply 버튼 입력 처리, UI 값을 설정 파일에 저장
+    /// </summary>
     private void OnApplyPressed()
     {
         WobbleSettings settings = new()
         {
-            OverallWobbleScalePercent = GetSelectedScaleValue(_overallWobbleScale, 115),
+            OverallWobbleScalePercent = GetSelectedScaleValue(_overallWobbleScale, 100),
             EnablePlayerWobble = _enablePlayerWobble.ButtonPressed,
             BlockBaseHitAnimation = _blockBaseHitAnimation.ButtonPressed,
             DisableWobbleOnDeath = _disableWobbleOnDeath.ButtonPressed,
@@ -183,6 +205,9 @@ public partial class WobbleModdingSettingsControl : PanelContainer
         _statusLabel.Text = "Saved. Wobble settings updated.";
     }
 
+    /// <summary>
+    /// 현재 설정 값을 각 입력 컨트롤 선택 상태로 반영
+    /// </summary>
     private void LoadSettingsIntoInputs()
     {
         WobbleSettings settings = WobbleSettingsManager.Current;
@@ -195,6 +220,9 @@ public partial class WobbleModdingSettingsControl : PanelContainer
         _longerWobble.ButtonPressed = settings.LongerWobble;
     }
 
+    /// <summary>
+    /// 전체 wobble 강도 선택용 OptionButton 생성
+    /// </summary>
     private static OptionButton CreateScaleOptionButton()
     {
         OptionButton optionButton = new()
@@ -214,6 +242,9 @@ public partial class WobbleModdingSettingsControl : PanelContainer
         return optionButton;
     }
 
+    /// <summary>
+    /// 설정 체크박스를 공통 스타일로 생성
+    /// </summary>
     private static CheckBox CreateOptionCheckBox(string text)
     {
         CheckBox checkBox = new()
@@ -231,6 +262,9 @@ public partial class WobbleModdingSettingsControl : PanelContainer
         return checkBox;
     }
 
+    /// <summary>
+    /// 체크박스와 설명 문구를 담은 설정 행 생성
+    /// </summary>
     private static PanelContainer CreateOptionRow(CheckBox checkBox, string description)
     {
         PanelContainer container = new();
@@ -259,6 +293,9 @@ public partial class WobbleModdingSettingsControl : PanelContainer
         return container;
     }
 
+    /// <summary>
+    /// 제목, 선택 버튼, 설명 문구를 담은 설정 행 생성
+    /// </summary>
     private static PanelContainer CreateOptionRow(string title, OptionButton optionButton, string description)
     {
         PanelContainer container = new();
@@ -295,12 +332,18 @@ public partial class WobbleModdingSettingsControl : PanelContainer
         return container;
     }
 
+    /// <summary>
+    /// 표시 문자열과 실제 퍼센트 값을 OptionButton 항목으로 추가
+    /// </summary>
     private static void AddScaleItem(OptionButton optionButton, string label, int value)
     {
         optionButton.AddItem(label);
         optionButton.SetItemMetadata(optionButton.ItemCount - 1, value);
     }
 
+    /// <summary>
+    /// 현재 선택된 OptionButton 항목에서 저장할 퍼센트 값 읽기
+    /// </summary>
     private static int GetSelectedScaleValue(OptionButton optionButton, int fallback)
     {
         int selected = optionButton.Selected;
@@ -315,6 +358,9 @@ public partial class WobbleModdingSettingsControl : PanelContainer
             : fallback;
     }
 
+    /// <summary>
+    /// 저장된 퍼센트 값과 일치하는 OptionButton 항목 선택
+    /// </summary>
     private static void SelectScaleValue(OptionButton optionButton, int value)
     {
         for (int index = 0; index < optionButton.ItemCount; index++)
@@ -333,6 +379,9 @@ public partial class WobbleModdingSettingsControl : PanelContainer
         }
     }
 
+    /// <summary>
+    /// 패널과 행에 사용할 공통 StyleBoxFlat 생성
+    /// </summary>
     private static StyleBoxFlat CreatePanelStyle(Color bgColor, Color borderColor)
     {
         return new StyleBoxFlat
@@ -354,6 +403,9 @@ public partial class WobbleModdingSettingsControl : PanelContainer
         };
     }
 
+    /// <summary>
+    /// 현재 선택된 모드의 WobbleTheSpire2 여부 확인
+    /// </summary>
     private static bool IsWobbleMod(Mod? mod)
     {
         if (mod == null)

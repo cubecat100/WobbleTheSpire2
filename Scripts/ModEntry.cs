@@ -5,6 +5,9 @@ using MegaCrit.Sts2.Core.Modding;
 
 namespace WobbleTheSpire2;
 
+/// <summary>
+/// 모드 로드 진입점, Harmony 패치와 wobble 시스템 초기화
+/// </summary>
 [ModInitializer(nameof(Initialize))]
 public static class ModEntry
 {
@@ -12,6 +15,9 @@ public static class ModEntry
 
     internal static MonsterHitWobbleSystem? WobbleSystem { get; private set; }
 
+    /// <summary>
+    /// Wobble 시스템 생성, Harmony 패치 등록
+    /// </summary>
     public static void Initialize()
     {
         Log.Warn("[WobbleTheSpire2] Initialize");
