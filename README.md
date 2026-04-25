@@ -1,5 +1,9 @@
 # WobbleTheSpire2
 
+## Demo Video
+
+[![WobbleTheSpire2 demo](https://img.youtube.com/vi/QLIUxHuNVXI/hqdefault.jpg)](https://www.youtube.com/watch?v=QLIUxHuNVXI)
+
 # English
 
 WobbleTheSpire2 is a hit reaction mod for Slay the Spire 2.
